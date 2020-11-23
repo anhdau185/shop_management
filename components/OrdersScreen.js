@@ -37,9 +37,9 @@ const OrdersScreen = () => {
                 }
             })}
         >
-            <Tab.Screen name="New" component={NewOrdersScreen} />
-            <Tab.Screen name="Ongoing" component={OngoingOrdersScreen} />
-            <Tab.Screen name="Completed" component={CompletedOrdersScreen} />
+            <Tab.Screen name="New" component={NewOrdersScreen} options={{ tabBarBadge: 16 }} />
+            <Tab.Screen name="Ongoing" component={OngoingOrdersScreen} options={{ tabBarBadge: 1 }} />
+            <Tab.Screen name="Completed" component={CompletedOrdersScreen} options={{ tabBarBadge: 9 }} />
         </Tab.Navigator>
     );
 };
