@@ -1,0 +1,55 @@
+{
+  "data": {
+    "transactionNo": "141120-01EQ2D3Q",
+    "userId": 1,
+    "userName": "An Tang",
+    "phoneNumber": "+84983165861",
+    "note": "Ghi chu",
+    "totalAmount": 30000,
+    "status": "NEW",
+    "storeId": "1000",
+    "paymentMethod": "MOMO",
+    "paymentStatus": "",
+    "orderDetails": [{
+        "productId": 11,
+        "productName": "Bún bò",
+        "productType": "Product",
+        "quantity": 2
+      },
+      {
+        "productId": 5,
+        "productName": "Bún thịt nướng",
+        "productType": "Product",
+        "quantity": 2
+      },
+      {
+        "productId": 12,
+        "productName": "Gỏi cuốn",
+        "productType": "Product",
+        "quantity": 1
+      },
+      {
+        "productId": 1,
+        "productName": "Combo bánh mì ốp la & cafe",
+        "productType": "Combo",
+        "quantity": 1,
+        "products": [{
+            "productId": 1,
+            "productName": "Cafe sữa đá (size vừa)",
+            "quantity": 1
+          },
+          {
+            "productId": 13,
+            "productName": "Bánh mì ốp la",
+            "quantity": 1
+          }
+        ]
+      }
+    ],
+    "orderAudits": [{
+      "status": "NEW",
+      "created_at": 1605350089
+    }],
+    "createdAt": 1606197129132
+  }
+}
