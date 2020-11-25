@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
+import { TouchableHighlight, StyleSheet, View, Text } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { getDateTimeFromMilliseconds } from '../helpers';
 import FormattedPrice from './FormattedPrice';
@@ -39,7 +39,7 @@ const OrderItem = ({ navigation, orderData }) => {
     };
 
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('OrderDetails')}>
+        <TouchableHighlight onPress={() => navigation.navigate('OrderDetails')}>
             <ListItem bottomDivider={true}>
                 <ListItem.Content>
                     <View style={styles.orderItem}>
@@ -71,7 +71,7 @@ const OrderItem = ({ navigation, orderData }) => {
                 </ListItem.Content>
                 <ListItem.Chevron color="#666" size={28} />
             </ListItem>
-        </TouchableOpacity>
+        </TouchableHighlight>
     );
 };
 
@@ -87,12 +87,13 @@ const styles = StyleSheet.create({
     totalQtyTextWrapper: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#dfdfdf',
+        backgroundColor: '#4db856',
         borderRadius: 5,
         height: 56,
         width: 56
     },
     totalQtyText: {
+        color: '#fff',
         fontSize: 24,
         fontWeight: 'bold'
     },
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     orderAmount: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#008358'
+        color: '#d64e25'
     },
     creationDateTime: {
         color: '#555',
