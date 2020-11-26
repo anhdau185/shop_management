@@ -1,24 +1,27 @@
 import { schemes, httpMethods, headers } from './staticEntries';
 
 const scheme = schemes.HTTPS;
-const host = '134d19ca4777.ap.ngrok.io';
+const host = 'de4e93c1fa73.ap.ngrok.io';
 const basePath = '/api/v1';
 const paths = {
     get: {
-        menu: '/menu',
-        test: '/posts/1'
+        orders: '/orders'
     },
-    post: {
-        authPhone: '/customers/phone_login',
-        authOtp: '/customers/verify_code',
-        createOrder: '/orders'
-    }
+    post: {}
 };
 
-function getApiPath(path, param = null) {
+function toQueryString(params) {
+    if (typeof params !== 'object') return '';
+    const keys = Object.keys(params);
+    if (keys.length === 0) return '';
+    return '?' + keys.map(key => `${key}=${encodeURIComponent(`${params[key]}`)}`).join('&');
+};
+
+function getApiPath(path, params = null) {
     let apiPath = scheme + host + basePath + path;
-    if (param) {
-        apiPath += param;
+    if (params) {
+        const queryString = toQueryString(params);
+        apiPath += queryString;
     }
     return apiPath;
 }
@@ -34,15 +37,15 @@ function getConfigurations(method, data = null) {
     return configurations;
 }
 
-/* export const fetchStoreMenu = async () => {
-    const apiPath = getApiPath(paths.get.menu);
+export const fetchOrders = async params => {
+    const apiPath = getApiPath(paths.get.orders, params);
     const configurations = getConfigurations(httpMethods.GET);
     const response = await fetch(apiPath, configurations);
     const data = await response.json();
     return data;
 };
 
-export const authenticatePhone = async phoneNumber => {
+/* export const authenticatePhone = async phoneNumber => {
     const apiPath = getApiPath(paths.post.authPhone);
     const configurations = getConfigurations(httpMethods.POST, { phoneNumber });
     const response = await fetch(apiPath, configurations);

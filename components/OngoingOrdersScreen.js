@@ -1,9 +1,12 @@
 import React from 'react';
-import orders from '../json/orders.json';
+import { connect } from 'react-redux';
 import OrderList from './OrderList';
 
-const OngoingOrdersScreen = ({ navigation }) => {
-    return <OrderList navigation={navigation} orders={orders} />;
-};
+const OngoingOrdersScreen = ({ navigation, ongoingOrders }) => (
+    <OrderList navigation={navigation} orders={ongoingOrders} />
+);
 
-export default OngoingOrdersScreen;
+const mapStateToProps = ({ allOrders }) => ({ ongoingOrders: allOrders });
+const ConnectedOngoingOrdersScreen = connect(mapStateToProps)(OngoingOrdersScreen);
+
+export default ConnectedOngoingOrdersScreen;

@@ -1,10 +1,11 @@
+import allOrders from '../../json/orders.json';
 import {
     FETCH_ALL_ORDERS_START,
     FETCH_ALL_ORDERS_SUCCESS,
     FETCH_ALL_ORDERS_FAILURE
 } from '../actions/types';
 
-const allOrdersReducer = (prevState = [], action) => {
+const allOrdersReducer = (prevState = allOrders, action) => {
     switch (action.type) {
         case FETCH_ALL_ORDERS_START:
             return prevState;

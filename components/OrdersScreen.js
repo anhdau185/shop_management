@@ -37,9 +37,30 @@ const OrdersScreen = () => {
                 }
             })}
         >
-            <Tab.Screen name="New" component={NewOrdersScreen} options={{ tabBarBadge: 16 }} />
-            <Tab.Screen name="Ongoing" component={OngoingOrdersScreen} options={{ tabBarBadge: 1 }} />
-            <Tab.Screen name="Completed" component={CompletedOrdersScreen} options={{ tabBarBadge: 9 }} />
+            <Tab.Screen
+                name="New"
+                component={NewOrdersScreen}
+                options={{
+                    tabBarBadge: 16,
+                    title: 'Mới'
+                }}
+            />
+            <Tab.Screen
+                name="Ongoing"
+                component={OngoingOrdersScreen}
+                options={{
+                    tabBarBadge: 1,
+                    title: 'Đang thực hiện'
+                }}
+            />
+            <Tab.Screen
+                name="Completed"
+                component={CompletedOrdersScreen}
+                options={{
+                    tabBarBadge: 9,
+                    title: 'Đã hoàn thành'
+                }}
+            />
         </Tab.Navigator>
     );
 };

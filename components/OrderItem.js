@@ -1,45 +1,32 @@
 import React from 'react';
 import { TouchableHighlight, StyleSheet, View, Text } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import { getDateTimeFromMilliseconds } from '../helpers';
+import { orderStatus } from '../enums';
+import { getDateTimeFromMilliseconds, getOrderQuantity } from '../helpers';
+
 import FormattedPrice from './FormattedPrice';
+import CustomBadge from './CustomBadge';
 
 const OrderItem = ({ navigation, orderData }) => {
-    const getOrderQuantity = (items, countComboProducts = true) => {
-        let result = 0;
-        items.forEach(item => {
-            if (item.productType === 'Combo') {
-                if (countComboProducts) {
-                    item.products.forEach(product => {
-                        result += product.quantity;
-                    });
-                } else {
-                    result += item.quantity;
-                }
-            } else if (item.productType === 'Product') {
-                result += item.quantity;
-            }
-        });
-        return result;
-    };
-
     const getBriefDescription = items => {
         const firstProductName = items[0].productName;
         const remainingCount = items.length - 1;
         let text = firstProductName;
         if (remainingCount > 0) {
-            text += ` and ${remainingCount} more`;
+            text += ` + ${remainingCount} SP khác`;
         }
         return text;
     };
 
-    const getLatestStatus = orderAudits => {
-        const latestStatusObj = orderAudits[orderAudits.length - 1];
-        return latestStatusObj.status;
-    };
-
     return (
-        <TouchableHighlight onPress={() => navigation.navigate('OrderDetails')}>
+        <TouchableHighlight
+            onPress={() => {
+                navigation.navigate(
+                    'OrderDetails',
+                    { orderId: orderData.transactionNo }
+                );
+            }}
+        >
             <ListItem bottomDivider={true}>
                 <ListItem.Content>
                     <View style={styles.orderItem}>
@@ -61,15 +48,13 @@ const OrderItem = ({ navigation, orderData }) => {
                             </Text>
                         </View>
                         <View style={styles.statusContainer}>
-                            <View style={styles.statusTextWrapper}>
-                                <Text style={styles.statusText}>
-                                    {getLatestStatus(orderData.orderAudits)}
-                                </Text>
-                            </View>
+                            <CustomBadge
+                                text={orderStatus[orderData.status].title}
+                                backgroundColor={orderStatus[orderData.status].indicatorColor}
+                            />
                         </View>
                     </View>
                 </ListItem.Content>
-                <ListItem.Chevron color="#666" size={28} />
             </ListItem>
         </TouchableHighlight>
     );
@@ -87,7 +72,7 @@ const styles = StyleSheet.create({
     totalQtyTextWrapper: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4db856',
+        backgroundColor: '#999',
         borderRadius: 5,
         height: 56,
         width: 56
@@ -100,7 +85,7 @@ const styles = StyleSheet.create({
     detailsContainer: {
         flex: 3,
         justifyContent: 'center',
-        paddingStart: 6
+        paddingStart: 8
     },
     userName: {
         fontSize: 20,
@@ -112,27 +97,15 @@ const styles = StyleSheet.create({
     orderAmount: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#d64e25'
+        color: '#4db856'
     },
     creationDateTime: {
         color: '#555',
         marginTop: 5
     },
     statusContainer: {
-        flex: 1,
-        justifyContent: 'center',
+        flex: 2,
         alignItems: 'flex-end'
-    },
-    statusTextWrapper: {
-        backgroundColor: '#4db856',
-        paddingVertical: 2,
-        paddingHorizontal: 6,
-        borderRadius: 4
-    },
-    statusText: {
-        color: '#fff',
-        fontSize: 14,
-        fontWeight: 'bold'
     }
 });
 
