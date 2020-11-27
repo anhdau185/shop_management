@@ -1,50 +1,37 @@
+import { Buffer } from 'buffer';
 import init from 'react_native_mqtt';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { mqttClientOptions, callbackMessages } from './mqttStaticEntries';
 
-init({
-    size: 10000,
-    storageBackend: AsyncStorage,
-    defaultExpires: 1000 * 3600 * 24,
-    enableCache: true,
-    reconnect: true,
-    sync: {}
-});
+global.Buffer = Buffer;
 
-function onConnectionLost(response) {
-    if (response.errorCode !== 0) {
-        console.log('Connection lost: ' + response.errorMessage);
-    }
-}
-
-function onMessageArrived(message) {
-    console.log('Message arrived: ' + message.payloadString);
-}
-
-function onConnectionEstablished() {
-    console.log('MQTT connection established!');
-    client.subscribe('dom/order');
-}
-
-const client = new Paho.MQTT.Client('broker.mqttdashboard.com', 1883, 'clientId-tvSPVqVcYOz');
-client.onConnectionLost = onConnectionLost;
-client.onMessageArrived = onMessageArrived;
-
-export function establishMQTTConnection() {
-    client.connect({
-        userName: 'mqtt_admin',
-        password: '123456',
-        onSuccess: onConnectionEstablished
+const establishMQTTConnection = (callbacks) => {
+    init({
+        size: 10000,
+        storageBackend: AsyncStorage,
+        defaultExpires: 1000 * 3600 * 24,
+        enableCache: true,
+        reconnect: true,
+        sync: {}
     });
+
+    const client = new Paho.MQTT.Client(mqttClientOptions.HOST, mqttClientOptions.PORT, mqttClientOptions.CLIENT_ID);
+    const { onMessageArrived, onConnectionLost } = callbacks;
+
+    client.onMessageArrived = onMessageArrived;
+    client.onConnectionLost = onConnectionLost;
+
+    client.connect({
+        userName: mqttClientOptions.USERNAME,
+        password: mqttClientOptions.PASSWORD,
+        onSuccess: () => {
+            console.info(callbackMessages.SUCCESS);
+            client.subscribe(mqttClientOptions.TOPIC);
+        },
+        onFailure: () => console.error(callbackMessages.FAILURE)
+    });
+
+    global.mqttClient = client;
 };
 
-export function closeMQTTConnection() {
-    console.log('MQTT connection about to close...');
-    client.disconnect();
-};
-
-const mqttConnection = {
-    establish: establishMQTTConnection,
-    close: closeMQTTConnection
-};
-
-export default mqttConnection;
+export default establishMQTTConnection;
