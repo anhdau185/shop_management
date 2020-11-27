@@ -2,13 +2,20 @@ import React from 'react';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import mqttConnection from '../mqtt';
 import OrdersScreen from './OrdersScreen';
 import OrderDetailsScreen from './OrderDetailsScreen';
 
 const Stack = createStackNavigator();
 
 const App = () => {
+    React.useEffect(() => {
+        mqttConnection.establish();
+        return () => {
+            mqttConnection.close();
+        };
+    }, []);
+
     return (
         <NavigationContainer>
             <Stack.Navigator>
