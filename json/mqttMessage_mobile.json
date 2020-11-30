@@ -1,0 +1,7 @@
+{
+    "type": "PUSH_NEW_ORDER",
+    "payload": {
+        "transactionNo": "141120-01EQ2D3Q",
+        "createdAt": 1234124124
+    }
+}

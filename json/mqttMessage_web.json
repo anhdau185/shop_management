@@ -1,0 +1,10 @@
+{
+    "type": "UPDATE_ORDER_STATUS",
+    "payload": {
+        "transactionNo": "141120-01EQ2D3Q",
+        "orderStatus": {
+            "status": "CONFIRMED",
+            "created_at": 1605350089
+        }
+    }
+}

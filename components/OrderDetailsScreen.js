@@ -68,12 +68,17 @@ const OrderDetailsScreen = ({ route, allOrders }) => {
                     <View style={styles.cardBody}>
                         <View style={styles.cardBodyLeft}>
                             <View style={styles.detailTextRow}>
-                                <Text>Khách thanh toán:</Text>
+                                <Text style={{ fontSize: 15 }}>Khách trả:</Text>
                                 <FormattedPrice value={orderData.totalAmount} style={styles.orderAmount} />
                             </View>
                             <View style={styles.detailTextRow}>
-                                <Text>Phương thức thanh toán:</Text>
-                                <Text style={styles.paymentMethod}>
+                                <Text style={{ fontSize: 15 }}>Thanh toán bằng:</Text>
+                                <Text
+                                    style={{
+                                        ...styles.paymentMethod,
+                                        color: paymentMethods[orderData.paymentMethod].indicatorColor
+                                    }}
+                                >
                                     {paymentMethods[orderData.paymentMethod].shortTitle}
                                 </Text>
                             </View>
@@ -196,8 +201,8 @@ const styles = StyleSheet.create({
         marginStart: 4
     },
     paymentMethod: {
+        fontSize: 15,
         fontWeight: 'bold',
-        color: '#4db856',
         marginStart: 4
     },
     bottomActions: {
@@ -258,7 +263,7 @@ const styles = StyleSheet.create({
 
 const iconOptions = {
     size: 20,
-    color: '#4db856',
+    color: '#333',
     width: 36
 };
 
