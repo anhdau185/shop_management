@@ -1,4 +1,4 @@
-import { fetchAllOrders as fetchAllOrdersApi } from '../../api';
+import { fetchOrders } from '../../api';
 import {
     FETCH_ALL_ORDERS_START,
     FETCH_ALL_ORDERS_SUCCESS,
@@ -7,19 +7,23 @@ import {
 
 const fetchAllOrdersStart = () => ({ type: FETCH_ALL_ORDERS_START });
 
-const fetchAllOrdersSuccess = (response) => ({
+const fetchAllOrdersSuccess = response => ({
     type: FETCH_ALL_ORDERS_SUCCESS,
     allOrders: response
 });
 
-const fetchAllOrdersFailure = (error) => ({
+const fetchAllOrdersFailure = error => ({
     type: FETCH_ALL_ORDERS_FAILURE,
     error
 });
 
 const fetchAllOrders = () => dispatch => {
     dispatch(fetchAllOrdersStart());
-    fetchAllOrdersApi()
+    fetchOrders({
+        status: '',
+        page: '',
+        perPage: ''
+    })
         .then(response => dispatch(fetchAllOrdersSuccess(response)))
         .catch(error => dispatch(fetchAllOrdersFailure(error)));
 };
