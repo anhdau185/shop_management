@@ -24,8 +24,8 @@ const orderStatus = {
         title: 'Đã lấy',
         indicatorColor: '#4db856'
     },
-    CANCELLED: {
-        stringValue: 'CANCELLED',
+    CANCELED: {
+        stringValue: 'CANCELED',
         title: 'Đã huỷ',
         indicatorColor: '#db2828'
     }

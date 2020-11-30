@@ -1,11 +1,12 @@
 import { schemes, httpMethods, headers } from './staticEntries';
 
 const scheme = schemes.HTTPS;
-const host = 'de4e93c1fa73.ap.ngrok.io';
+const host = 'f43632f2fc2d.ap.ngrok.io';
 const basePath = '/api/v1';
 const paths = {
     get: {
-        orders: '/orders'
+        orders: '/orders',
+        order: '/order'
     },
     post: {}
 };
@@ -39,6 +40,14 @@ function getConfigurations(method, data = null) {
 
 export const fetchOrders = async params => {
     const apiPath = getApiPath(paths.get.orders, params);
+    const configurations = getConfigurations(httpMethods.GET);
+    const response = await fetch(apiPath, configurations);
+    const data = await response.json();
+    return data;
+};
+
+export const fetchOrder = async orderId => {
+    const apiPath = getApiPath(`${paths.get.order}/${orderId}`);
     const configurations = getConfigurations(httpMethods.GET);
     const response = await fetch(apiPath, configurations);
     const data = await response.json();

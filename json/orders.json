@@ -135,7 +135,7 @@
       "phoneNumber": "+84983165861",
       "note": "Ghi chu",
       "totalAmount": 60000,
-      "status": "CANCELLED",
+      "status": "CANCELED",
       "storeId": "1000",
       "paymentMethod": "COD",
       "paymentStatus": "UNPAID",
