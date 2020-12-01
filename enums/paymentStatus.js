@@ -1,6 +1,6 @@
-const paymentStatus = {
-    UNPAID: {
-        stringValue: 'UNPAID',
+const PaymentStatus = {
+    NEW: {
+        stringValue: 'NEW',
         title: 'Chưa thanh toán',
         indicatorColor: '#888'
     },
@@ -21,4 +21,4 @@ const paymentStatus = {
     }
 };
 
-export default paymentStatus;
+export default PaymentStatus;

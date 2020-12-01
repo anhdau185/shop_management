@@ -1,4 +1,4 @@
-const paymentMethods = {
+const PaymentMethod = {
     MOMO: {
         stringValue: 'MOMO',
         shortTitle: 'Ví MoMo',
@@ -13,4 +13,4 @@ const paymentMethods = {
     }
 };
 
-export default paymentMethods;
+export default PaymentMethod;

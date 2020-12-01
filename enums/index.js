@@ -1,9 +1,9 @@
-import paymentMethods from './paymentMethods';
-import paymentStatus from './paymentStatus';
-import orderStatus from './orderStatus';
+import PaymentMethod from './PaymentMethod';
+import PaymentStatus from './PaymentStatus';
+import OrderStatus from './OrderStatus';
 
 export {
-    paymentMethods,
-    paymentStatus,
-    orderStatus
+    PaymentMethod,
+    PaymentStatus,
+    OrderStatus
 };

@@ -4,8 +4,9 @@ import { Card, Button } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fetchOrder } from '../api';
-import { paymentMethods, paymentStatus, orderStatus } from '../enums';
+import { PaymentMethod, PaymentStatus, OrderStatus } from '../enums';
 import { getDateTimeFromMilliseconds, getOrderQuantity } from '../helpers';
 
 import CustomBadge from './CustomBadge';
@@ -47,14 +48,18 @@ const OrderDetailsScreen = ({ route }) => {
                                     <Text style={styles.detailText}>{order.phoneNumber}</Text>
                                 </View>
                                 <View style={styles.detailTextRow}>
+                                    <DetailIcon iconFamily="MaterialCommunityIcons" name="note-text-outline" />
+                                    <Text style={styles.detailText}>{order.note || '<Không có>'}</Text>
+                                </View>
+                                <View style={styles.detailTextRow}>
                                     <DetailIcon iconFamily="FontAwesome5" name="hand-holding-usd" />
                                     <Text style={styles.detailText}>Nhận hàng tại quầy</Text>
                                 </View>
                             </View>
                             <View style={styles.cardBodyRight}>
                                 <CustomBadge
-                                    text={orderStatus[order.status].title}
-                                    backgroundColor={orderStatus[order.status].indicatorColor}
+                                    text={OrderStatus[order.status].title}
+                                    backgroundColor={OrderStatus[order.status].indicatorColor}
                                 />
                             </View>
                         </View>
@@ -82,10 +87,10 @@ const OrderDetailsScreen = ({ route }) => {
                                     <Text
                                         style={{
                                             ...styles.paymentMethod,
-                                            color: paymentMethods[order.paymentMethod].indicatorColor
+                                            color: PaymentMethod[order.paymentMethod].indicatorColor
                                         }}
                                     >
-                                        {paymentMethods[order.paymentMethod].shortTitle}
+                                        {PaymentMethod[order.paymentMethod].shortTitle}
                                     </Text>
                                 </View>
                             </View>
@@ -93,8 +98,8 @@ const OrderDetailsScreen = ({ route }) => {
                                 {
                                     order.paymentStatus
                                         ? <CustomBadge
-                                            text={paymentStatus[order.paymentStatus].title}
-                                            backgroundColor={paymentStatus[order.paymentStatus].indicatorColor}
+                                            text={PaymentStatus[order.paymentStatus].title}
+                                            backgroundColor={PaymentStatus[order.paymentStatus].indicatorColor}
                                         />
                                         : null
                                 }
@@ -141,6 +146,16 @@ const DetailIcon = ({ iconFamily, name }) => {
             case 'FontAwesome5':
                 iconJSX = (
                     <FontAwesome5
+                        name={name}
+                        size={iconOptions.size}
+                        color={iconOptions.color}
+                        style={{ width: iconOptions.width }}
+                    />
+                );
+                break;
+            case 'MaterialCommunityIcons':
+                iconJSX = (
+                    <MaterialCommunityIcons
                         name={name}
                         size={iconOptions.size}
                         color={iconOptions.color}

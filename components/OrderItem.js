@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableHighlight, StyleSheet, View, Text } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import { orderStatus } from '../enums';
+import { OrderStatus } from '../enums';
 import { getDateTimeFromMilliseconds, getOrderQuantity } from '../helpers';
 
 import FormattedPrice from './FormattedPrice';
@@ -19,16 +19,8 @@ const OrderItem = ({ navigation, order }) => {
     };
 
     const { transactionNo, orderDetails, userName, totalAmount, createdAt, status } = order;
-
     return (
-        <TouchableHighlight
-            onPress={() => {
-                navigation.navigate(
-                    'OrderDetails',
-                    { orderId: transactionNo }
-                );
-            }}
-        >
+        <TouchableHighlight onPress={() => navigation.navigate('OrderDetails', { orderId: transactionNo })}>
             <ListItem bottomDivider={true}>
                 <ListItem.Content>
                     <View style={styles.orderItem}>
@@ -52,8 +44,8 @@ const OrderItem = ({ navigation, order }) => {
                         </View>
                         <View style={styles.statusContainer}>
                             <CustomBadge
-                                text={orderStatus[status].title}
-                                backgroundColor={orderStatus[status].indicatorColor}
+                                text={OrderStatus[status].title}
+                                backgroundColor={OrderStatus[status].indicatorColor}
                             />
                         </View>
                     </View>

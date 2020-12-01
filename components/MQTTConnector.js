@@ -13,10 +13,12 @@ const MQTTConnector = ({ pushNewOrder }) => {
                 const { type, payload } = action;
 
                 if (type === 'PUSH_NEW_ORDER') {
-                    ToastAndroid.showWithGravity(
+                    ToastAndroid.showWithGravityAndOffset(
                         'Bạn có đơn hàng mới',
                         ToastAndroid.LONG,
-                        ToastAndroid.BOTTOM
+                        ToastAndroid.BOTTOM,
+                        0,
+                        50
                     );
                     pushNewOrder(payload.transactionNo);
                 }

@@ -1,4 +1,4 @@
-const orderStatus = {
+const OrderStatus = {
     NEW: {
         stringValue: 'NEW',
         title: 'Mới tạo đơn',
@@ -31,4 +31,4 @@ const orderStatus = {
     }
 };
 
-export default orderStatus;
+export default OrderStatus;

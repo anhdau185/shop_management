@@ -12,7 +12,7 @@ const newOrdersReducer = (prevState = [], action) => {
         case FETCH_NEW_ORDERS_START:
             return prevState;
         case FETCH_NEW_ORDERS_SUCCESS:
-            return [...prevState, ...action.newOrders];
+            return action.newOrders;
         case FETCH_NEW_ORDERS_FAILURE:
             return prevState;
         case PUSH_NEW_ORDER_START:
