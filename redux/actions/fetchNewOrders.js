@@ -17,12 +17,12 @@ const fetchNewOrdersFailure = error => ({
     error
 });
 
-const fetchNewOrders = ({ page, perPage }) => dispatch => {
+const fetchNewOrders = () => dispatch => {
     dispatch(fetchNewOrdersStart());
     fetchOrders({
         status: 'NEW,RECEIVED',
-        page,
-        perPage
+        page: 1,
+        perPage: 100
     })
         .then(response => dispatch(fetchNewOrdersSuccess(response.data.records)))
         .catch(error => dispatch(fetchNewOrdersFailure(error)));

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { StyleSheet, View, SafeAreaView, Text, ScrollView } from 'react-native';
 import { Card, Button } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -281,6 +280,4 @@ const iconOptions = {
     width: 36
 };
 
-const ConnectedOrderDetailsScreen = connect(null, null)(OrderDetailsScreen);
-
-export default ConnectedOrderDetailsScreen;
+export default OrderDetailsScreen;

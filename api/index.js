@@ -60,33 +60,3 @@ export const fetchOrder = async orderId => {
     const data = await response.json();
     return data;
 };
-
-/* export const authenticatePhone = async phoneNumber => {
-    const apiPath = getApiPath(paths.post.authPhone);
-    const configurations = getConfigurations(httpMethods.POST, { phoneNumber });
-    const response = await fetch(apiPath, configurations);
-    const data = await response.json();
-    return data;
-};
-
-export const authenticateOtp = async (phoneNumber, otp) => {
-    const apiPath = getApiPath(paths.post.authOtp);
-    const configurations = getConfigurations(
-        httpMethods.POST,
-        {
-            phoneNumber,
-            codeVerify: otp
-        }
-    );
-    const response = await fetch(apiPath, configurations);
-    const data = await response.json();
-    return data;
-};
-
-export const createOrder = async order => {
-    const apiPath = getApiPath(paths.post.createOrder);
-    const configurations = getConfigurations(httpMethods.POST, order);
-    const response = await fetch(apiPath, configurations);
-    const data = await response.json();
-    return data;
-}; */

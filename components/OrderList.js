@@ -1,10 +1,10 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { View, FlatList } from 'react-native';
 import OrderItem from './OrderItem';
 
 const OrderList = ({ navigation, orders }) => {
     return (
-        <View style={styles.container}>
+        <View style={{ flex: 1 }}>
             <FlatList
                 data={orders}
                 renderItem={({ item }) => <OrderItem navigation={navigation} order={item} />}
@@ -13,11 +13,5 @@ const OrderList = ({ navigation, orders }) => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    }
-});
 
 export default OrderList;
