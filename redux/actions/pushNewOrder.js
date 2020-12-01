@@ -8,9 +8,9 @@ import {
 
 const pushNewOrderStart = () => ({ type: PUSH_NEW_ORDER_START });
 
-const pushNewOrderSuccess = response => ({
+const pushNewOrderSuccess = newOrder => ({
     type: PUSH_NEW_ORDER_SUCCESS,
-    newOrder: response
+    newOrder
 });
 
 const pushNewOrderFailure = error => ({
@@ -21,7 +21,7 @@ const pushNewOrderFailure = error => ({
 const pushNewOrder = orderId => dispatch => {
     dispatch(pushNewOrderStart());
     fetchOrder(orderId)
-        .then(response => dispatch(pushNewOrderSuccess(response)))
+        .then(response => dispatch(pushNewOrderSuccess(response.data)))
         .catch(error => dispatch(pushNewOrderFailure(error)));
 };
 

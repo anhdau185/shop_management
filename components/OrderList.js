@@ -1,15 +1,23 @@
 import React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import OrderItem from './OrderItem';
 
 const OrderList = ({ navigation, orders }) => {
     return (
-        <FlatList
-            data={orders}
-            renderItem={({ item }) => <OrderItem navigation={navigation} orderData={item.data} />}
-            keyExtractor={item => item.data.transactionNo}
-        />
+        <View style={styles.container}>
+            <FlatList
+                data={orders}
+                renderItem={({ item }) => <OrderItem navigation={navigation} order={item} />}
+                keyExtractor={(item, index) => `${index}_${item.transactionNo}`}
+            />
+        </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    }
+});
 
 export default OrderList;

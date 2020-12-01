@@ -7,9 +7,9 @@ import {
 
 const fetchNewOrdersStart = () => ({ type: FETCH_NEW_ORDERS_START });
 
-const fetchNewOrdersSuccess = response => ({
+const fetchNewOrdersSuccess = newOrders => ({
     type: FETCH_NEW_ORDERS_SUCCESS,
-    newOrders: response
+    newOrders
 });
 
 const fetchNewOrdersFailure = error => ({
@@ -24,7 +24,7 @@ const fetchNewOrders = ({ page, perPage }) => dispatch => {
         page,
         perPage
     })
-        .then(response => dispatch(fetchNewOrdersSuccess(response)))
+        .then(response => dispatch(fetchNewOrdersSuccess(response.data.records)))
         .catch(error => dispatch(fetchNewOrdersFailure(error)));
 };
 

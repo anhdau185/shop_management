@@ -7,7 +7,7 @@ import { getDateTimeFromMilliseconds, getOrderQuantity } from '../helpers';
 import FormattedPrice from './FormattedPrice';
 import CustomBadge from './CustomBadge';
 
-const OrderItem = ({ navigation, orderData }) => {
+const OrderItem = ({ navigation, order }) => {
     const getBriefDescription = items => {
         const firstProductName = items[0].productName;
         const remainingCount = items.length - 1;
@@ -18,12 +18,14 @@ const OrderItem = ({ navigation, orderData }) => {
         return text;
     };
 
+    const { transactionNo, orderDetails, userName, totalAmount, createdAt, status } = order;
+
     return (
         <TouchableHighlight
             onPress={() => {
                 navigation.navigate(
                     'OrderDetails',
-                    { orderId: orderData.transactionNo }
+                    { orderId: transactionNo }
                 );
             }}
         >
@@ -33,24 +35,25 @@ const OrderItem = ({ navigation, orderData }) => {
                         <View style={styles.totalQtyContainer}>
                             <View style={styles.totalQtyTextWrapper}>
                                 <Text style={styles.totalQtyText}>
-                                    {getOrderQuantity(orderData.orderDetails)}
+                                    {getOrderQuantity(orderDetails)}
                                 </Text>
                             </View>
                         </View>
                         <View style={styles.detailsContainer}>
-                            <Text style={styles.userName}>{orderData.userName}</Text>
+                            <Text>{transactionNo}</Text>
+                            <Text style={styles.userName}>{userName}</Text>
                             <Text style={styles.briefDescription}>
-                                {getBriefDescription(orderData.orderDetails)}
+                                {getBriefDescription(orderDetails)}
                             </Text>
-                            <FormattedPrice value={orderData.totalAmount} style={styles.orderAmount} />
+                            <FormattedPrice value={totalAmount} style={styles.orderAmount} />
                             <Text style={styles.creationDateTime}>
-                                {getDateTimeFromMilliseconds(orderData.createdAt)}
+                                {getDateTimeFromMilliseconds(createdAt)}
                             </Text>
                         </View>
                         <View style={styles.statusContainer}>
                             <CustomBadge
-                                text={orderStatus[orderData.status].title}
-                                backgroundColor={orderStatus[orderData.status].indicatorColor}
+                                text={orderStatus[status].title}
+                                backgroundColor={orderStatus[status].indicatorColor}
                             />
                         </View>
                     </View>

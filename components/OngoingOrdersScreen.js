@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import OrderList from './OrderList';
 
 const OngoingOrdersScreen = ({ navigation, ongoingOrders }) => (
-    <OrderList navigation={navigation} orders={ongoingOrders} />
+    /* <OrderList navigation={navigation} orders={[]} /> */null
 );
 
 const mapStateToProps = ({ allOrders }) => ({ ongoingOrders: allOrders });

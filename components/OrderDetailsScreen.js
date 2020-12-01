@@ -1,103 +1,117 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, SafeAreaView, Text, ScrollView } from 'react-native';
 import { Card, Button } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { fetchOrder } from '../api';
 import { paymentMethods, paymentStatus, orderStatus } from '../enums';
 import { getDateTimeFromMilliseconds, getOrderQuantity } from '../helpers';
 
 import CustomBadge from './CustomBadge';
 import FormattedPrice from './FormattedPrice';
 
-const OrderDetailsScreen = ({ route, allOrders }) => {
+const OrderDetailsScreen = ({ route }) => {
+    const [order, setOrder] = useState(null);
     const orderId = route.params.orderId;
-    const order = allOrders.find(item => item.data.transactionNo === orderId);
-    const orderData = order.data;
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView style={styles.container}>
-                <Card>
-                    <Card.Title style={styles.cardTitle}>Thông tin đơn hàng</Card.Title>
-                    <Card.Divider />
-                    <View style={styles.cardBody}>
-                        <View style={styles.cardBodyLeft}>
-                            <View style={styles.detailTextRow}>
-                                <DetailIcon iconFamily="FontAwesome5" name="hashtag" />
-                                <Text style={styles.detailText}>{orderId}</Text>
+    useEffect(() => {
+        fetchOrder(orderId)
+            .then(response => setOrder(response.data))
+            .catch(error => console.log(error));
+    }, []);
+
+    if (order) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <ScrollView style={styles.container}>
+                    <Card>
+                        <Card.Title style={styles.cardTitle}>Thông tin đơn hàng</Card.Title>
+                        <Card.Divider />
+                        <View style={styles.cardBody}>
+                            <View style={styles.cardBodyLeft}>
+                                <View style={styles.detailTextRow}>
+                                    <DetailIcon iconFamily="FontAwesome5" name="hashtag" />
+                                    <Text style={styles.detailText}>{orderId}</Text>
+                                </View>
+                                <View style={styles.detailTextRow}>
+                                    <DetailIcon iconFamily="Ionicons" name="time-outline" />
+                                    <Text style={styles.detailText}>{getDateTimeFromMilliseconds(order.createdAt)}</Text>
+                                </View>
+                                <View style={styles.detailTextRow}>
+                                    <DetailIcon iconFamily="FontAwesome" name="user-circle-o" />
+                                    <Text style={styles.detailText}>{order.userName}</Text>
+                                </View>
+                                <View style={styles.detailTextRow}>
+                                    <DetailIcon iconFamily="FontAwesome" name="phone" />
+                                    <Text style={styles.detailText}>{order.phoneNumber}</Text>
+                                </View>
+                                <View style={styles.detailTextRow}>
+                                    <DetailIcon iconFamily="FontAwesome5" name="hand-holding-usd" />
+                                    <Text style={styles.detailText}>Nhận hàng tại quầy</Text>
+                                </View>
                             </View>
-                            <View style={styles.detailTextRow}>
-                                <DetailIcon iconFamily="Ionicons" name="time-outline" />
-                                <Text style={styles.detailText}>{getDateTimeFromMilliseconds(orderData.createdAt)}</Text>
-                            </View>
-                            <View style={styles.detailTextRow}>
-                                <DetailIcon iconFamily="FontAwesome" name="user-circle-o" />
-                                <Text style={styles.detailText}>{orderData.userName}</Text>
-                            </View>
-                            <View style={styles.detailTextRow}>
-                                <DetailIcon iconFamily="FontAwesome" name="phone" />
-                                <Text style={styles.detailText}>{orderData.phoneNumber}</Text>
-                            </View>
-                            <View style={styles.detailTextRow}>
-                                <DetailIcon iconFamily="FontAwesome5" name="hand-holding-usd" />
-                                <Text style={styles.detailText}>Nhận hàng tại quầy</Text>
+                            <View style={styles.cardBodyRight}>
+                                <CustomBadge
+                                    text={orderStatus[order.status].title}
+                                    backgroundColor={orderStatus[order.status].indicatorColor}
+                                />
                             </View>
                         </View>
-                        <View style={styles.cardBodyRight}>
-                            <CustomBadge
-                                text={orderStatus[orderData.status].title}
-                                backgroundColor={orderStatus[orderData.status].indicatorColor}
-                            />
-                        </View>
-                    </View>
-                </Card>
-                <Card>
-                    <Card.Title style={styles.cardTitle}>
-                        Chi tiết đơn hàng (Tổng: {getOrderQuantity(orderData.orderDetails)} món)
+                    </Card>
+                    <Card>
+                        <Card.Title style={styles.cardTitle}>
+                            Chi tiết đơn hàng (Tổng: {getOrderQuantity(order.orderDetails)} món)
                     </Card.Title>
-                    <Card.Divider />
-                    <View style={styles.productTilesWrapper}>
-                        {orderData.orderDetails.map((item, index) => <ProductTile key={index} product={item} />)}
-                    </View>
-                </Card>
-                <Card>
-                    <Card.Title style={styles.cardTitle}>Thanh toán</Card.Title>
-                    <Card.Divider />
-                    <View style={styles.cardBody}>
-                        <View style={styles.cardBodyLeft}>
-                            <View style={styles.detailTextRow}>
-                                <Text style={{ fontSize: 15 }}>Khách trả:</Text>
-                                <FormattedPrice value={orderData.totalAmount} style={styles.orderAmount} />
+                        <Card.Divider />
+                        <View style={styles.productTilesWrapper}>
+                            {order.orderDetails.map((item, index) => <ProductTile key={index} product={item} />)}
+                        </View>
+                    </Card>
+                    <Card>
+                        <Card.Title style={styles.cardTitle}>Thanh toán</Card.Title>
+                        <Card.Divider />
+                        <View style={styles.cardBody}>
+                            <View style={styles.cardBodyLeft}>
+                                <View style={styles.detailTextRow}>
+                                    <Text style={{ fontSize: 15 }}>Khách trả:</Text>
+                                    <FormattedPrice value={order.totalAmount} style={styles.orderAmount} />
+                                </View>
+                                <View style={styles.detailTextRow}>
+                                    <Text style={{ fontSize: 15 }}>Thanh toán bằng:</Text>
+                                    <Text
+                                        style={{
+                                            ...styles.paymentMethod,
+                                            color: paymentMethods[order.paymentMethod].indicatorColor
+                                        }}
+                                    >
+                                        {paymentMethods[order.paymentMethod].shortTitle}
+                                    </Text>
+                                </View>
                             </View>
-                            <View style={styles.detailTextRow}>
-                                <Text style={{ fontSize: 15 }}>Thanh toán bằng:</Text>
-                                <Text
-                                    style={{
-                                        ...styles.paymentMethod,
-                                        color: paymentMethods[orderData.paymentMethod].indicatorColor
-                                    }}
-                                >
-                                    {paymentMethods[orderData.paymentMethod].shortTitle}
-                                </Text>
+                            <View style={styles.cardBodyRight}>
+                                {
+                                    order.paymentStatus
+                                        ? <CustomBadge
+                                            text={paymentStatus[order.paymentStatus].title}
+                                            backgroundColor={paymentStatus[order.paymentStatus].indicatorColor}
+                                        />
+                                        : null
+                                }
                             </View>
                         </View>
-                        <View style={styles.cardBodyRight}>
-                            <CustomBadge
-                                text={paymentStatus[orderData.paymentStatus].title}
-                                backgroundColor={paymentStatus[orderData.paymentStatus].indicatorColor}
-                            />
-                        </View>
+                    </Card>
+                    <View style={styles.bottomActions}>
+                        <Button title="Xác nhận" buttonStyle={{ backgroundColor: '#367ff5', width: 150, borderRadius: 5 }} />
+                        <Button title="Huỷ đơn" buttonStyle={{ backgroundColor: '#db2828', width: 150, borderRadius: 5 }} />
                     </View>
-                </Card>
-                <View style={styles.bottomActions}>
-                    <Button title="Xác nhận" buttonStyle={{ backgroundColor: '#367ff5', width: 150, borderRadius: 5 }} />
-                    <Button title="Huỷ đơn" buttonStyle={{ backgroundColor: '#db2828', width: 150, borderRadius: 5 }} />
-                </View>
-            </ScrollView>
-        </SafeAreaView>
-    );
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
+
+    return null;
 };
 
 const DetailIcon = ({ iconFamily, name }) => {
@@ -159,9 +173,9 @@ const ProductTile = ({ product }) => {
                 </Text>
                 <View style={styles.productPricingContainer}>
                     <Text style={styles.pricing}>x </Text>
-                    <FormattedPrice value={15000/* product.price */} style={styles.pricing} />
+                    <FormattedPrice value={product.price} style={styles.pricing} />
                     <Text style={styles.pricing}> = </Text>
-                    <FormattedPrice value={product.quantity * 15000/* product.subtotal */} style={styles.pricingBold} />
+                    <FormattedPrice value={product.subtotal} style={styles.pricingBold} />
                 </View>
             </View>
         </View>
@@ -180,7 +194,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     cardBodyLeft: {
-        flex: 2
+        flex: 1
     },
     cardBodyRight: {
         flex: 1,
@@ -267,7 +281,6 @@ const iconOptions = {
     width: 36
 };
 
-const mapStateToProps = ({ allOrders }) => ({ allOrders });
-const ConnectedOrderDetailsScreen = connect(mapStateToProps)(OrderDetailsScreen);
+const ConnectedOrderDetailsScreen = connect(null, null)(OrderDetailsScreen);
 
 export default ConnectedOrderDetailsScreen;

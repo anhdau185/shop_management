@@ -1,12 +1,11 @@
 import { schemes, httpMethods, headers } from './staticEntries';
 
 const scheme = schemes.HTTPS;
-const host = 'f43632f2fc2d.ap.ngrok.io';
+const host = '56512e5d481c.ap.ngrok.io';
 const basePath = '/api/v1';
 const paths = {
     get: {
-        orders: '/orders',
-        order: '/order'
+        orders: '/orders'
     },
     post: {}
 };
@@ -21,8 +20,16 @@ function toQueryString(params) {
 function getApiPath(path, params = null) {
     let apiPath = scheme + host + basePath + path;
     if (params) {
-        const queryString = toQueryString(params);
-        apiPath += queryString;
+        const type = typeof params;
+
+        if (type === 'number' || type === 'string') {
+            apiPath += `/${params}`;
+        }
+
+        if (type === 'object') {
+            const queryString = toQueryString(params);
+            apiPath += queryString;
+        }
     }
     return apiPath;
 }
@@ -47,7 +54,7 @@ export const fetchOrders = async params => {
 };
 
 export const fetchOrder = async orderId => {
-    const apiPath = getApiPath(`${paths.get.order}/${orderId}`);
+    const apiPath = getApiPath(paths.get.orders, orderId);
     const configurations = getConfigurations(httpMethods.GET);
     const response = await fetch(apiPath, configurations);
     const data = await response.json();

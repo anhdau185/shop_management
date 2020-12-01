@@ -17,8 +17,10 @@ const newOrdersReducer = (prevState = [], action) => {
             return prevState;
         case PUSH_NEW_ORDER_START:
             return prevState;
-        case PUSH_NEW_ORDER_SUCCESS:
-            return [action.newOrder, ...prevState];
+        case PUSH_NEW_ORDER_SUCCESS: {
+            const withoutLastElement = prevState.filter((item, index) => index < prevState.length - 1);
+            return [action.newOrder, ...withoutLastElement];
+        }
         case PUSH_NEW_ORDER_FAILURE:
             return prevState;
         default:
