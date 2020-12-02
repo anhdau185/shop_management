@@ -25,7 +25,7 @@ const fetchCompletedOrders = ({page, perPage}) => dispatch => {
         page,
         perPage
     })
-        .then(response => dispatch(fetchCompletedOrdersSuccess(response.data.records)))
+        .then(response => dispatch(fetchCompletedOrdersSuccess(response.data)))
         .catch(error => dispatch(fetchCompletedOrdersFailure(error)));
 };
 

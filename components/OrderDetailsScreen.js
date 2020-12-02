@@ -19,7 +19,7 @@ const OrderDetailsScreen = ({ route }) => {
     useEffect(() => {
         fetchOrder(orderId)
             .then(response => setOrder(response.data))
-            .catch(error => console.log(error));
+            .catch(error => console.error(error));
     }, []);
 
     if (order) {
@@ -95,10 +95,14 @@ const OrderDetailsScreen = ({ route }) => {
                                 </View>
                             </View>
                             <View style={styles.cardBodyRight}>
-                                <CustomBadge
-                                    text={PaymentStatus[order.paymentStatus].title}
-                                    backgroundColor={PaymentStatus[order.paymentStatus].indicatorColor}
-                                />
+                                {
+                                    PaymentStatus[order.paymentStatus]
+                                        ? <CustomBadge
+                                            text={PaymentStatus[order.paymentStatus].title}
+                                            backgroundColor={PaymentStatus[order.paymentStatus].indicatorColor}
+                                        />
+                                        : null
+                                }
                             </View>
                         </View>
                     </Card>

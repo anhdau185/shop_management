@@ -25,7 +25,7 @@ const fetchOngoingOrders = ({page, perPage}) => dispatch => {
         page,
         perPage
     })
-        .then(response => dispatch(fetchOngoingOrdersSuccess(response.data.records)))
+        .then(response => dispatch(fetchOngoingOrdersSuccess(response.data)))
         .catch(error => dispatch(fetchOngoingOrdersFailure(error)));
 };
 

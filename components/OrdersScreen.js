@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,7 +11,7 @@ import CompletedOrdersScreen from './CompletedOrdersScreen';
 
 const Tab = createBottomTabNavigator();
 
-const OrdersScreen = () => {
+const OrdersScreen = ({ newOrdersCount, ongoingOrdersCount, completedOrdersCount }) => {
     return (
         <Tab.Navigator
             tabBarOptions={{
@@ -40,29 +41,46 @@ const OrdersScreen = () => {
             <Tab.Screen
                 name="New"
                 component={NewOrdersScreen}
-                options={{
-                    tabBarBadge: 16,
-                    title: 'Mới'
-                }}
+                options={newOrdersCount > 0
+                    ? {
+                        tabBarBadge: newOrdersCount,
+                        title: 'Mới'
+                    }
+                    : { title: 'Mới' }
+                }
             />
             <Tab.Screen
                 name="Ongoing"
                 component={OngoingOrdersScreen}
-                options={{
-                    tabBarBadge: 1,
-                    title: 'Đang thực hiện'
-                }}
+                options={ongoingOrdersCount > 0
+                    ? {
+                        tabBarBadge: ongoingOrdersCount,
+                        title: 'Đang thực hiện'
+                    }
+                    : { title: 'Đang thực hiện' }
+                }
             />
             <Tab.Screen
                 name="Completed"
                 component={CompletedOrdersScreen}
-                options={{
-                    tabBarBadge: 9,
-                    title: 'Đã hoàn thành'
-                }}
+                options={completedOrdersCount > 0
+                    ? {
+                        tabBarBadge: completedOrdersCount,
+                        title: 'Đã hoàn thành'
+                    }
+                    : { title: 'Đã hoàn thành' }
+                }
             />
         </Tab.Navigator>
     );
 };
 
-export default OrdersScreen;
+const mapStateToProps = ({ newOrders, ongoingOrders, completedOrders }) => ({
+    newOrdersCount: newOrders.length,
+    ongoingOrdersCount: ongoingOrders ? ongoingOrders.records.length : 0,
+    completedOrdersCount: completedOrders ? completedOrders.records.length : 0
+});
+
+const ConnectedOrdersScreen = connect(mapStateToProps)(OrdersScreen);
+
+export default ConnectedOrdersScreen;

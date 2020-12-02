@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { SafeAreaView, View, StyleSheet } from 'react-native';
+import { SafeAreaView, View, StyleSheet, Text } from 'react-native';
 import { Button } from 'react-native-elements';
 import { fetchOngoingOrders } from '../redux/actions';
 import OrderList from './OrderList';
@@ -14,17 +14,21 @@ const OngoingOrdersScreen = ({ navigation, ongoingOrders, fetchOngoingOrders }) 
         });
     }, [page]);
 
-    if (ongoingOrders.length > 0) {
+    if (ongoingOrders && ongoingOrders.records.length > 0) {
         return (
             <SafeAreaView style={styles.container}>
-                <OrderList navigation={navigation} orders={ongoingOrders} />
-                <View style={styles.bottomAction}>
-                    <Button
-                        title="Tải thêm"
-                        buttonStyle={{ width: 200, borderRadius: 5 }}
-                        onPress={() => setPage(currentPage => currentPage + 1)}
-                    />
-                </View>
+                <OrderList navigation={navigation} orders={ongoingOrders.records} />
+                {
+                    ongoingOrders.page < ongoingOrders.pages
+                        ? <View style={styles.bottomAction}>
+                            <Button
+                                title="Tải thêm"
+                                buttonStyle={{ width: 200, borderRadius: 5 }}
+                                onPress={() => setPage(currentPage => currentPage + 1)}
+                            />
+                        </View>
+                        : null
+                }
             </SafeAreaView>
         );
     }
@@ -49,7 +53,10 @@ const styles = StyleSheet.create({
     },
     bottomAction: {
         alignItems: 'center',
-        paddingVertical: 10
+        paddingVertical: 5,
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderTopColor: '#c3c3c3'
     }
 });
 

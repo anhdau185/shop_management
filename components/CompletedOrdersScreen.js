@@ -14,17 +14,21 @@ const CompletedOrdersScreen = ({ navigation, completedOrders, fetchCompletedOrde
         });
     }, [page]);
 
-    if (completedOrders.length > 0) {
+    if (completedOrders && completedOrders.records.length > 0) {
         return (
             <SafeAreaView style={styles.container}>
-                <OrderList navigation={navigation} orders={completedOrders} />
-                <View style={styles.bottomAction}>
-                    <Button
-                        title="Tải thêm"
-                        buttonStyle={{ width: 200, borderRadius: 5 }}
-                        onPress={() => setPage(currentPage => currentPage + 1)}
-                    />
-                </View>
+                <OrderList navigation={navigation} orders={completedOrders.records} />
+                {
+                    completedOrders.page < completedOrders.pages
+                        ? <View style={styles.bottomAction}>
+                            <Button
+                                title="Tải thêm"
+                                buttonStyle={{ width: 200, borderRadius: 5 }}
+                                onPress={() => setPage(currentPage => currentPage + 1)}
+                            />
+                        </View>
+                        : null
+                }
             </SafeAreaView>
         );
     }
@@ -49,7 +53,10 @@ const styles = StyleSheet.create({
     },
     bottomAction: {
         alignItems: 'center',
-        paddingVertical: 10
+        paddingVertical: 5,
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderTopColor: '#c3c3c3'
     }
 });
 
