@@ -95,14 +95,10 @@ const OrderDetailsScreen = ({ route }) => {
                                 </View>
                             </View>
                             <View style={styles.cardBodyRight}>
-                                {
-                                    order.paymentStatus
-                                        ? <CustomBadge
-                                            text={PaymentStatus[order.paymentStatus].title}
-                                            backgroundColor={PaymentStatus[order.paymentStatus].indicatorColor}
-                                        />
-                                        : null
-                                }
+                                <CustomBadge
+                                    text={PaymentStatus[order.paymentStatus].title}
+                                    backgroundColor={PaymentStatus[order.paymentStatus].indicatorColor}
+                                />
                             </View>
                         </View>
                     </Card>

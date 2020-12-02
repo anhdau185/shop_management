@@ -1,31 +1,31 @@
 const OrderStatus = {
     NEW: {
-        stringValue: 'NEW',
+        value: 'NEW',
         title: 'Mới tạo đơn',
         indicatorColor: '#ed5426'
     },
     RECEIVED: {
-        stringValue: 'RECEIVED',
+        value: 'RECEIVED',
         title: 'Mới nhận đơn',
         indicatorColor: '#ed5426'
     },
     CONFIRMED: {
-        stringValue: 'CONFIRMED',
+        value: 'CONFIRMED',
         title: 'Đã xác nhận',
         indicatorColor: '#367ff5'
     },
     AVAILABLE: {
-        stringValue: 'AVAILABLE',
+        value: 'AVAILABLE',
         title: 'Sẵn sàng giao',
         indicatorColor: '#367ff5'
     },
     COMPLETED: {
-        stringValue: 'COMPLETED',
+        value: 'COMPLETED',
         title: 'Đã lấy',
         indicatorColor: '#4db856'
     },
     CANCELED: {
-        stringValue: 'CANCELED',
+        value: 'CANCELED',
         title: 'Đã huỷ',
         indicatorColor: '#db2828'
     }

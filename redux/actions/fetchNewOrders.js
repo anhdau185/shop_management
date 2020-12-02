@@ -1,4 +1,5 @@
 import { fetchOrders } from '../../api';
+import { OrderStatus } from '../../enums';
 import {
     FETCH_NEW_ORDERS_START,
     FETCH_NEW_ORDERS_SUCCESS,
@@ -20,7 +21,7 @@ const fetchNewOrdersFailure = error => ({
 const fetchNewOrders = () => dispatch => {
     dispatch(fetchNewOrdersStart());
     fetchOrders({
-        status: 'NEW,RECEIVED',
+        status: `${OrderStatus.NEW.value},${OrderStatus.RECEIVED.value}`,
         page: 1,
         perPage: 100
     })

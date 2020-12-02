@@ -1,21 +1,21 @@
 const PaymentStatus = {
     NEW: {
-        stringValue: 'NEW',
+        value: 'NEW',
         title: 'Chưa thanh toán',
         indicatorColor: '#888'
     },
     PAID: {
-        stringValue: 'PAID',
+        value: 'PAID',
         title: 'Đã thanh toán',
         indicatorColor: '#367ff5'
     },
     FAILED: {
-        stringValue: 'FAILED',
+        value: 'FAILED',
         title: 'Không thành công',
         indicatorColor: '#db2828'
     },
     REFUNDED: {
-        stringValue: 'REFUNDED',
+        value: 'REFUNDED',
         title: 'Đã hoàn tiền',
         indicatorColor: '#ed5426'
     }
