@@ -17,17 +17,20 @@ const CompletedOrdersScreen = ({ navigation, completedOrders, fetchCompletedOrde
     if (completedOrders && completedOrders.records.length > 0) {
         return (
             <SafeAreaView style={styles.container}>
-                <OrderList navigation={navigation} orders={completedOrders.records} />
-                {
-                    completedOrders.page < completedOrders.pages
-                        ? <View style={styles.bottomAction}>
-                            <Button
-                                title="Tải thêm"
-                                buttonStyle={{ width: 200, borderRadius: 5 }}
-                                onPress={() => setPage(currentPage => currentPage + 1)}
-                            />
-                        </View>
-                        : null
+                <OrderList
+                    navigation={navigation}
+                    orders={completedOrders.records}
+                    onRefresh={fetchCompletedOrders.bind(this, { page: 1, perPage: 10 })}
+                />
+                {completedOrders.page < completedOrders.pages
+                    ? <View style={styles.bottomAction}>
+                        <Button
+                            title="Tải thêm"
+                            buttonStyle={{ width: 200, borderRadius: 5 }}
+                            onPress={() => setPage(currentPage => currentPage + 1)}
+                        />
+                    </View>
+                    : null
                 }
             </SafeAreaView>
         );

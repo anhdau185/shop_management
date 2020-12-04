@@ -12,7 +12,7 @@ const NewOrdersScreen = ({ navigation, newOrders, fetchNewOrders }) => {
     if (newOrders.length > 0) {
         return (
             <SafeAreaView style={styles.container}>
-                <OrderList navigation={navigation} orders={newOrders} />
+                <OrderList navigation={navigation} orders={newOrders} onRefresh={fetchNewOrders} />
             </SafeAreaView>
         );
     }

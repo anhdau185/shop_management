@@ -18,7 +18,7 @@ const fetchNewOrdersFailure = error => ({
     error
 });
 
-const fetchNewOrders = () => dispatch => {
+const fetchNewOrders = (callback = null) => dispatch => {
     dispatch(fetchNewOrdersStart());
     fetchOrders({
         status: `${OrderStatus.NEW.value},${OrderStatus.RECEIVED.value}`,
@@ -26,7 +26,12 @@ const fetchNewOrders = () => dispatch => {
         perPage: 100
     })
         .then(response => dispatch(fetchNewOrdersSuccess(response.data.records)))
-        .catch(error => dispatch(fetchNewOrdersFailure(error)));
+        .catch(error => dispatch(fetchNewOrdersFailure(error)))
+        .finally(() => {
+            if (typeof callback === 'function') {
+                callback();
+            }
+        });
 };
 
 export default fetchNewOrders;

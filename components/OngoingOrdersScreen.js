@@ -17,17 +17,20 @@ const OngoingOrdersScreen = ({ navigation, ongoingOrders, fetchOngoingOrders }) 
     if (ongoingOrders && ongoingOrders.records.length > 0) {
         return (
             <SafeAreaView style={styles.container}>
-                <OrderList navigation={navigation} orders={ongoingOrders.records} />
-                {
-                    ongoingOrders.page < ongoingOrders.pages
-                        ? <View style={styles.bottomAction}>
-                            <Button
-                                title="Tải thêm"
-                                buttonStyle={{ width: 200, borderRadius: 5 }}
-                                onPress={() => setPage(currentPage => currentPage + 1)}
-                            />
-                        </View>
-                        : null
+                <OrderList
+                    navigation={navigation}
+                    orders={ongoingOrders.records}
+                    onRefresh={fetchOngoingOrders.bind(this, { page: 1, perPage: 10 })}
+                />
+                {ongoingOrders.page < ongoingOrders.pages
+                    ? <View style={styles.bottomAction}>
+                        <Button
+                            title="Tải thêm"
+                            buttonStyle={{ width: 200, borderRadius: 5 }}
+                            onPress={() => setPage(currentPage => currentPage + 1)}
+                        />
+                    </View>
+                    : null
                 }
             </SafeAreaView>
         );
