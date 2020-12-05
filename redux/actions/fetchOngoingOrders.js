@@ -18,18 +18,22 @@ const fetchOngoingOrdersFailure = error => ({
     error
 });
 
-const fetchOngoingOrders = (paging, callback = null) => dispatch => {
+const fetchOngoingOrders = (paging, ...callbacks) => dispatch => {
     dispatch(fetchOngoingOrdersStart());
     fetchOrders({
         status: `${OrderStatus.CONFIRMED.value},${OrderStatus.AVAILABLE.value}`,
         page: paging.page,
-        perPage: paging.page
+        perPage: paging.perPage
     })
         .then(response => dispatch(fetchOngoingOrdersSuccess(response.data)))
         .catch(error => dispatch(fetchOngoingOrdersFailure(error)))
         .finally(() => {
-            if (typeof callback === 'function') {
-                callback();
+            if (callbacks) {
+                callbacks.forEach(callback => {
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                });
             }
         });
 };

@@ -1,7 +1,10 @@
 import {
     FETCH_COMPLETED_ORDERS_START,
     FETCH_COMPLETED_ORDERS_SUCCESS,
-    FETCH_COMPLETED_ORDERS_FAILURE
+    FETCH_COMPLETED_ORDERS_FAILURE,
+    REFRESH_COMPLETED_ORDERS_START,
+    REFRESH_COMPLETED_ORDERS_SUCCESS,
+    REFRESH_COMPLETED_ORDERS_FAILURE
 } from '../actions/types';
 
 const completedOrdersReducer = (prevState = null, action) => {
@@ -20,6 +23,12 @@ const completedOrdersReducer = (prevState = null, action) => {
             return action.completedOrders;
         }
         case FETCH_COMPLETED_ORDERS_FAILURE:
+            return prevState;
+        case REFRESH_COMPLETED_ORDERS_START:
+            return prevState;
+        case REFRESH_COMPLETED_ORDERS_SUCCESS:
+            return action.completedOrders;
+        case REFRESH_COMPLETED_ORDERS_FAILURE:
             return prevState;
         default:
             return prevState;

@@ -1,5 +1,6 @@
 import { fetchOrders } from '../../api';
 import { OrderStatus } from '../../enums';
+import { NEW_ORDER_LIST_PAGE_SIZE, ORDER_LIST_INITIAL_PAGE } from '../../constants';
 import {
     FETCH_NEW_ORDERS_START,
     FETCH_NEW_ORDERS_SUCCESS,
@@ -18,18 +19,22 @@ const fetchNewOrdersFailure = error => ({
     error
 });
 
-const fetchNewOrders = (callback = null) => dispatch => {
+const fetchNewOrders = (...callbacks) => dispatch => {
     dispatch(fetchNewOrdersStart());
     fetchOrders({
         status: `${OrderStatus.NEW.value},${OrderStatus.RECEIVED.value}`,
-        page: 1,
-        perPage: 100
+        page: ORDER_LIST_INITIAL_PAGE,
+        perPage: NEW_ORDER_LIST_PAGE_SIZE
     })
         .then(response => dispatch(fetchNewOrdersSuccess(response.data.records)))
         .catch(error => dispatch(fetchNewOrdersFailure(error)))
         .finally(() => {
-            if (typeof callback === 'function') {
-                callback();
+            if (callbacks) {
+                callbacks.forEach(callback => {
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                });
             }
         });
 };

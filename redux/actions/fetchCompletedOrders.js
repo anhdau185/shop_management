@@ -18,18 +18,22 @@ const fetchCompletedOrdersFailure = error => ({
     error
 });
 
-const fetchCompletedOrders = (paging, callback = null) => dispatch => {
+const fetchCompletedOrders = (paging, ...callbacks) => dispatch => {
     dispatch(fetchCompletedOrdersStart());
     fetchOrders({
         status: `${OrderStatus.COMPLETED.value},${OrderStatus.CANCELED.value}`,
         page: paging.page,
-        perPage: paging.page
+        perPage: paging.perPage
     })
         .then(response => dispatch(fetchCompletedOrdersSuccess(response.data)))
         .catch(error => dispatch(fetchCompletedOrdersFailure(error)))
         .finally(() => {
-            if (typeof callback === 'function') {
-                callback();
+            if (callbacks) {
+                callbacks.forEach(callback => {
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                });
             }
         });
 };

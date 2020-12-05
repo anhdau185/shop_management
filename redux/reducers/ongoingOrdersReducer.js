@@ -1,7 +1,10 @@
 import {
     FETCH_ONGOING_ORDERS_START,
     FETCH_ONGOING_ORDERS_SUCCESS,
-    FETCH_ONGOING_ORDERS_FAILURE
+    FETCH_ONGOING_ORDERS_FAILURE,
+    REFRESH_ONGOING_ORDERS_START,
+    REFRESH_ONGOING_ORDERS_SUCCESS,
+    REFRESH_ONGOING_ORDERS_FAILURE
 } from '../actions/types';
 
 const ongoingOrdersReducer = (prevState = null, action) => {
@@ -20,6 +23,12 @@ const ongoingOrdersReducer = (prevState = null, action) => {
             return action.ongoingOrders;
         }
         case FETCH_ONGOING_ORDERS_FAILURE:
+            return prevState;
+        case REFRESH_ONGOING_ORDERS_START:
+            return prevState;
+        case REFRESH_ONGOING_ORDERS_SUCCESS:
+            return action.ongoingOrders;
+        case REFRESH_ONGOING_ORDERS_FAILURE:
             return prevState;
         default:
             return prevState;
