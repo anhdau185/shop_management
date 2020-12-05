@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import { fetchNewOrders } from '../redux/actions';
 import OrderList from './OrderList';
 
@@ -9,19 +9,12 @@ const NewOrdersScreen = ({ navigation, newOrders, fetchNewOrders }) => {
         fetchNewOrders();
     }, []);
 
-    if (newOrders.length > 0) {
-        return (
-            <SafeAreaView style={styles.container}>
-                <OrderList navigation={navigation} orders={newOrders} onRefresh={fetchNewOrders} />
-            </SafeAreaView>
-        );
-    }
-
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.innerContainer}>
-                <Text>Chưa có đơn hàng mới nào.</Text>
-            </View>
+            <OrderList
+                navigation={navigation}
+                orders={newOrders}
+                onRefresh={doneRefreshing => fetchNewOrders(doneRefreshing)} />
         </SafeAreaView>
     );
 };

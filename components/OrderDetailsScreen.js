@@ -1,114 +1,194 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { StyleSheet, View, SafeAreaView, Text, ScrollView } from 'react-native';
 import { Card, Button } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { fetchOrder } from '../api';
+import { fetchOrder, updateOrder } from '../api';
 import { PaymentMethod, PaymentStatus, OrderStatus } from '../enums';
 import { getDateTimeFromMilliseconds, getOrderQuantity } from '../helpers';
+import { fetchNewOrders, refreshOngoingOrders, refreshCompletedOrders } from '../redux/actions';
 
 import CustomBadge from './CustomBadge';
 import FormattedPrice from './FormattedPrice';
 
-const OrderDetailsScreen = ({ route }) => {
+const OrderDetailsScreen = ({ route, fetchNewOrders, refreshOngoingOrders, refreshCompletedOrders }) => {
     const [order, setOrder] = useState(null);
+    const [refreshing, setRefreshing] = useState(true);
     const orderId = route.params.orderId;
 
     useEffect(() => {
-        fetchOrder(orderId)
-            .then(response => setOrder(response.data))
-            .catch(error => console.error(error));
-    }, []);
+        if (refreshing) {
+            fetchOrder(orderId)
+                .then(response => setOrder(response.data))
+                .catch(error => console.error(error))
+                .finally(() => setRefreshing(false));
+        }
+    }, [refreshing]);
 
     if (order) {
         return (
             <SafeAreaView style={styles.container}>
-                <ScrollView style={styles.container}>
-                    <Card>
-                        <Card.Title style={styles.cardTitle}>Thông tin đơn hàng</Card.Title>
-                        <Card.Divider />
-                        <View style={styles.cardBody}>
-                            <View style={styles.cardBodyLeft}>
-                                <View style={styles.detailTextRow}>
-                                    <DetailIcon iconFamily="FontAwesome5" name="hashtag" />
-                                    <Text style={styles.detailText}>{orderId}</Text>
+                <ScrollView>
+                    <View style={styles.innerContainer}>
+                        <Card>
+                            <Card.Title style={styles.cardTitle}>Thông tin đơn hàng</Card.Title>
+                            <Card.Divider />
+                            <View style={styles.cardBody}>
+                                <View style={styles.cardBodyLeft}>
+                                    <View style={styles.detailTextRow}>
+                                        <DetailIcon iconFamily="FontAwesome5" name="hashtag" />
+                                        <Text style={styles.detailText}>{orderId}</Text>
+                                    </View>
+                                    <View style={styles.detailTextRow}>
+                                        <DetailIcon iconFamily="Ionicons" name="time-outline" />
+                                        <Text style={styles.detailText}>{getDateTimeFromMilliseconds(order.createdAt)}</Text>
+                                    </View>
+                                    <View style={styles.detailTextRow}>
+                                        <DetailIcon iconFamily="FontAwesome" name="user-circle-o" />
+                                        <Text style={styles.detailText}>{order.userName}</Text>
+                                    </View>
+                                    <View style={styles.detailTextRow}>
+                                        <DetailIcon iconFamily="FontAwesome" name="phone" />
+                                        <Text style={styles.detailText}>{order.phoneNumber}</Text>
+                                    </View>
+                                    <View style={styles.detailTextRow}>
+                                        <DetailIcon iconFamily="MaterialCommunityIcons" name="note-text-outline" />
+                                        <Text style={styles.detailText}>{order.note || '<Không có>'}</Text>
+                                    </View>
+                                    <View style={styles.detailTextRow}>
+                                        <DetailIcon iconFamily="FontAwesome5" name="hand-holding-usd" />
+                                        <Text style={styles.detailText}>Nhận hàng tại quầy</Text>
+                                    </View>
                                 </View>
-                                <View style={styles.detailTextRow}>
-                                    <DetailIcon iconFamily="Ionicons" name="time-outline" />
-                                    <Text style={styles.detailText}>{getDateTimeFromMilliseconds(order.createdAt)}</Text>
-                                </View>
-                                <View style={styles.detailTextRow}>
-                                    <DetailIcon iconFamily="FontAwesome" name="user-circle-o" />
-                                    <Text style={styles.detailText}>{order.userName}</Text>
-                                </View>
-                                <View style={styles.detailTextRow}>
-                                    <DetailIcon iconFamily="FontAwesome" name="phone" />
-                                    <Text style={styles.detailText}>{order.phoneNumber}</Text>
-                                </View>
-                                <View style={styles.detailTextRow}>
-                                    <DetailIcon iconFamily="MaterialCommunityIcons" name="note-text-outline" />
-                                    <Text style={styles.detailText}>{order.note || '<Không có>'}</Text>
-                                </View>
-                                <View style={styles.detailTextRow}>
-                                    <DetailIcon iconFamily="FontAwesome5" name="hand-holding-usd" />
-                                    <Text style={styles.detailText}>Nhận hàng tại quầy</Text>
+                                <View style={styles.cardBodyRight}>
+                                    <CustomBadge
+                                        text={OrderStatus[order.status].title}
+                                        backgroundColor={OrderStatus[order.status].indicatorColor}
+                                    />
                                 </View>
                             </View>
-                            <View style={styles.cardBodyRight}>
-                                <CustomBadge
-                                    text={OrderStatus[order.status].title}
-                                    backgroundColor={OrderStatus[order.status].indicatorColor}
-                                />
-                            </View>
-                        </View>
-                    </Card>
-                    <Card>
-                        <Card.Title style={styles.cardTitle}>
-                            Chi tiết đơn hàng (Tổng: {getOrderQuantity(order.orderDetails)} món)
+                        </Card>
+                        <Card>
+                            <Card.Title style={styles.cardTitle}>
+                                Chi tiết đơn hàng (Tổng: {getOrderQuantity(order.orderDetails)} món)
                     </Card.Title>
-                        <Card.Divider />
-                        <View style={styles.productTilesWrapper}>
-                            {order.orderDetails.map((item, index) => <ProductTile key={index} product={item} />)}
-                        </View>
-                    </Card>
-                    <Card>
-                        <Card.Title style={styles.cardTitle}>Thanh toán</Card.Title>
-                        <Card.Divider />
-                        <View style={styles.cardBody}>
-                            <View style={styles.cardBodyLeft}>
-                                <View style={styles.detailTextRow}>
-                                    <Text style={{ fontSize: 15 }}>Khách trả:</Text>
-                                    <FormattedPrice value={order.totalAmount} style={styles.orderAmount} />
+                            <Card.Divider />
+                            <View style={styles.productTilesWrapper}>
+                                {order.orderDetails.map((item, index) => <ProductTile key={index} product={item} />)}
+                            </View>
+                        </Card>
+                        <Card>
+                            <Card.Title style={styles.cardTitle}>Thanh toán</Card.Title>
+                            <Card.Divider />
+                            <View style={styles.cardBody}>
+                                <View style={styles.cardBodyLeft}>
+                                    <View style={styles.detailTextRow}>
+                                        <Text style={{ fontSize: 15 }}>Khách trả:</Text>
+                                        <FormattedPrice value={order.totalAmount} style={styles.orderAmount} />
+                                    </View>
+                                    <View style={styles.detailTextRow}>
+                                        <Text style={{ fontSize: 15 }}>Thanh toán bằng:</Text>
+                                        <Text
+                                            style={{
+                                                ...styles.paymentMethod,
+                                                color: PaymentMethod[order.paymentMethod].indicatorColor
+                                            }}
+                                        >
+                                            {PaymentMethod[order.paymentMethod].shortTitle}
+                                        </Text>
+                                    </View>
                                 </View>
-                                <View style={styles.detailTextRow}>
-                                    <Text style={{ fontSize: 15 }}>Thanh toán bằng:</Text>
-                                    <Text
-                                        style={{
-                                            ...styles.paymentMethod,
-                                            color: PaymentMethod[order.paymentMethod].indicatorColor
-                                        }}
-                                    >
-                                        {PaymentMethod[order.paymentMethod].shortTitle}
-                                    </Text>
+                                <View style={styles.cardBodyRight}>
+                                    {
+                                        PaymentStatus[order.paymentStatus]
+                                            ? <CustomBadge
+                                                text={PaymentStatus[order.paymentStatus].title}
+                                                backgroundColor={PaymentStatus[order.paymentStatus].indicatorColor}
+                                            />
+                                            : null
+                                    }
                                 </View>
                             </View>
-                            <View style={styles.cardBodyRight}>
-                                {
-                                    PaymentStatus[order.paymentStatus]
-                                        ? <CustomBadge
-                                            text={PaymentStatus[order.paymentStatus].title}
-                                            backgroundColor={PaymentStatus[order.paymentStatus].indicatorColor}
-                                        />
-                                        : null
-                                }
-                            </View>
+                        </Card>
+                        <View
+                            style={order.status === OrderStatus.NEW.value || order.status === OrderStatus.RECEIVED.value
+                                ? styles.bottomActions
+                                : styles.hidden
+                            }
+                        >
+                            <Button
+                                title="Xác nhận"
+                                buttonStyle={{ backgroundColor: '#367ff5', width: 150, borderRadius: 5 }}
+                                onPress={() => {
+                                    updateOrder({
+                                        transactionNo: order.transactionNo,
+                                        status: OrderStatus.CONFIRMED.value,
+                                        cancelReason: ''
+                                    })
+                                        .then(() => {
+                                            fetchNewOrders();
+                                            refreshOngoingOrders();
+                                            setRefreshing(true);
+                                        })
+                                        .catch(error => console.error(error));
+                                }}
+                            />
+                            <Button
+                                title="Huỷ đơn"
+                                buttonStyle={{ backgroundColor: '#db2828', width: 150, borderRadius: 5 }}
+                            // onPress={null}
+                            />
                         </View>
-                    </Card>
-                    <View style={styles.bottomActions}>
-                        <Button title="Xác nhận" buttonStyle={{ backgroundColor: '#367ff5', width: 150, borderRadius: 5 }} />
-                        <Button title="Huỷ đơn" buttonStyle={{ backgroundColor: '#db2828', width: 150, borderRadius: 5 }} />
+                        <View
+                            style={order.status === OrderStatus.CONFIRMED.value
+                                ? styles.bottomSingleAction
+                                : styles.hidden
+                            }
+                        >
+                            <Button
+                                title="Sẵn sàng giao!"
+                                buttonStyle={{ backgroundColor: '#367ff5', width: 180, borderRadius: 5 }}
+                                onPress={() => {
+                                    updateOrder({
+                                        transactionNo: order.transactionNo,
+                                        status: OrderStatus.AVAILABLE.value,
+                                        cancelReason: ''
+                                    })
+                                        .then(() => {
+                                            refreshOngoingOrders();
+                                            setRefreshing(true);
+                                        })
+                                        .catch(error => console.error(error));
+                                }}
+                            />
+                        </View>
+                        <View
+                            style={order.status === OrderStatus.AVAILABLE.value
+                                ? styles.bottomSingleAction
+                                : styles.hidden
+                            }
+                        >
+                            <Button
+                                title="Hoàn thành đơn"
+                                buttonStyle={{ backgroundColor: '#367ff5', width: 180, borderRadius: 5 }}
+                                onPress={() => {
+                                    updateOrder({
+                                        transactionNo: order.transactionNo,
+                                        status: OrderStatus.COMPLETED.value,
+                                        cancelReason: ''
+                                    })
+                                        .then(() => {
+                                            refreshOngoingOrders();
+                                            refreshCompletedOrders();
+                                            setRefreshing(true);
+                                        })
+                                        .catch(error => console.error(error));
+                                }}
+                            />
+                        </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -120,7 +200,6 @@ const OrderDetailsScreen = ({ route }) => {
 
 const DetailIcon = ({ iconFamily, name }) => {
     let iconJSX;
-
     if (iconFamily) {
         switch (iconFamily) {
             case 'Ionicons':
@@ -167,7 +246,6 @@ const DetailIcon = ({ iconFamily, name }) => {
                 iconJSX = null;
         }
     }
-
     return iconJSX;
 };
 
@@ -200,6 +278,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f4f4'
+    },
+    innerContainer: {
+        flex: 1,
+        paddingBottom: 15
+    },
+    hidden: {
+        display: 'none'
     },
     cardTitle: {
         textAlign: 'left'
@@ -236,7 +321,12 @@ const styles = StyleSheet.create({
     bottomActions: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        paddingVertical: 20,
+        paddingTop: 20,
+        paddingHorizontal: 15
+    },
+    bottomSingleAction: {
+        alignItems: 'center',
+        paddingTop: 20,
         paddingHorizontal: 15
     },
     productTilesWrapper: {
@@ -295,4 +385,12 @@ const iconOptions = {
     width: 36
 };
 
-export default OrderDetailsScreen;
+const mapDispatchToProps = {
+    fetchNewOrders,
+    refreshOngoingOrders,
+    refreshCompletedOrders
+};
+
+const ConnectedOrderDetailsScreen = connect(null, mapDispatchToProps)(OrderDetailsScreen);
+
+export default ConnectedOrderDetailsScreen;
