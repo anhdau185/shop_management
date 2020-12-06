@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, SafeAreaView, Text, ScrollView } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Text, ScrollView, Alert } from 'react-native';
 import { Card, Button } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -123,17 +123,31 @@ const OrderDetailsScreen = ({ route, fetchNewOrders, refreshOngoingOrders, refre
                                 title="Xác nhận"
                                 buttonStyle={{ backgroundColor: '#367ff5', width: 150, borderRadius: 5 }}
                                 onPress={() => {
-                                    updateOrder({
-                                        transactionNo: order.transactionNo,
-                                        status: OrderStatus.CONFIRMED.value,
-                                        cancelReason: ''
-                                    })
-                                        .then(() => {
-                                            fetchNewOrders();
-                                            refreshOngoingOrders();
-                                            setRefreshing(true);
-                                        })
-                                        .catch(error => console.error(error));
+                                    Alert.alert(
+                                        'Xác nhận đơn hàng',
+                                        'Bạn muốn xác nhận đơn hàng này? Lưu ý: Không thể huỷ đơn hàng sau khi đã xác nhận',
+                                        [{
+                                            text: 'Không',
+                                            style: 'cancel'
+                                        },
+                                        {
+                                            text: 'Có',
+                                            onPress: () => {
+                                                updateOrder({
+                                                    transactionNo: order.transactionNo,
+                                                    status: OrderStatus.CONFIRMED.value,
+                                                    cancelReason: ''
+                                                })
+                                                    .then(() => {
+                                                        fetchNewOrders();
+                                                        refreshOngoingOrders();
+                                                        setRefreshing(true);
+                                                    })
+                                                    .catch(error => console.error(error));
+                                            }
+                                        }],
+                                        { cancelable: false }
+                                    );
                                 }}
                             />
                             <Button
