@@ -4,7 +4,7 @@ import { ToastAndroid } from 'react-native';
 import { OrderStatus } from '../enums';
 import { updateOrder } from '../api';
 import mqttConnection from '../mqtt';
-import { fetchNewOrders } from '../redux/actions';
+import { fetchNewOrders, refreshCompletedOrders, triggerUpdateOrderDetails } from '../redux/actions';
 
 const inAppNotify = () => {
     ToastAndroid.showWithGravityAndOffset(
@@ -16,20 +16,26 @@ const inAppNotify = () => {
     );
 };
 
-const MQTTConnector = ({ fetchNewOrders }) => {
+const MQTTConnector = ({ fetchNewOrders, refreshCompletedOrders, triggerUpdateOrderDetails }) => {
     useEffect(() => {
         mqttConnection.establish({
             onMessageArrived: message => {
                 console.info('Message arrived: ' + message.payloadString);
                 const action = JSON.parse(message.payloadString);
-                if (action.type === 'PUSH_NEW_ORDER') {
+                const { type, payload } = action;
+
+                if (type === 'PUSH_NEW_ORDER') {
                     updateOrder({
-                        transactionNo: action.payload.transactionNo,
+                        transactionNo: payload.transactionNo,
                         status: OrderStatus.RECEIVED.value,
                         cancelReason: ''
                     })
                         .then(() => fetchNewOrders(inAppNotify))
                         .catch(error => console.error(error));
+                } else if (type === 'CANCEL_ORDER') {
+                    triggerUpdateOrderDetails(payload.transactionNo);
+                    fetchNewOrders();
+                    refreshCompletedOrders();
                 }
             },
             onConnectionLost: response => {
@@ -47,7 +53,12 @@ const MQTTConnector = ({ fetchNewOrders }) => {
     return null;
 };
 
-const mapDispatchToProps = { fetchNewOrders };
+const mapDispatchToProps = {
+    fetchNewOrders,
+    refreshCompletedOrders,
+    triggerUpdateOrderDetails
+};
+
 const ConnectedComp = connect(null, mapDispatchToProps)(MQTTConnector);
 
 export default ConnectedComp;

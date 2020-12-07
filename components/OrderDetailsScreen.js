@@ -15,7 +15,7 @@ import { fetchNewOrders, refreshOngoingOrders, refreshCompletedOrders } from '..
 import CustomBadge from './CustomBadge';
 import FormattedPrice from './FormattedPrice';
 
-const OrderDetailsScreen = ({ route, fetchNewOrders, refreshOngoingOrders, refreshCompletedOrders }) => {
+const OrderDetailsScreen = ({ route, shouldOrderDetailsUpdate, fetchNewOrders, refreshOngoingOrders, refreshCompletedOrders }) => {
     const orderId = route.params.orderId;
     const [order, setOrder] = useState(null);
     const [refreshing, setRefreshing] = useState(true);
@@ -30,6 +30,14 @@ const OrderDetailsScreen = ({ route, fetchNewOrders, refreshOngoingOrders, refre
                 .finally(() => setRefreshing(false));
         }
     }, [refreshing]);
+
+    useEffect(() => {
+        if (shouldOrderDetailsUpdate && shouldOrderDetailsUpdate === orderId) {
+            fetchOrder(orderId)
+                .then(response => setOrder(response.data))
+                .catch(error => console.error(error));
+        }
+    }, [shouldOrderDetailsUpdate]);
 
     if (order) {
         return (
@@ -518,12 +526,14 @@ const iconOptions = {
     width: 36
 };
 
+const mapStateToProps = ({ shouldOrderDetailsUpdate }) => ({ shouldOrderDetailsUpdate });
+
 const mapDispatchToProps = {
     fetchNewOrders,
     refreshOngoingOrders,
     refreshCompletedOrders
 };
 
-const ConnectedOrderDetailsScreen = connect(null, mapDispatchToProps)(OrderDetailsScreen);
+const ConnectedOrderDetailsScreen = connect(mapStateToProps, mapDispatchToProps)(OrderDetailsScreen);
 
 export default ConnectedOrderDetailsScreen;

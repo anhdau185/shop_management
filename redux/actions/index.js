@@ -5,6 +5,7 @@ import fetchOngoingOrders from './fetchOngoingOrders';
 import refreshOngoingOrders from './refreshOngoingOrders';
 import fetchCompletedOrders from './fetchCompletedOrders';
 import refreshCompletedOrders from './refreshCompletedOrders';
+import triggerUpdateOrderDetails from './triggerUpdateOrderDetails';
 
 export {
     updateTestData,
@@ -13,5 +14,6 @@ export {
     fetchOngoingOrders,
     refreshOngoingOrders,
     fetchCompletedOrders,
-    refreshCompletedOrders
+    refreshCompletedOrders,
+    triggerUpdateOrderDetails
 };
