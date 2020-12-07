@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, SafeAreaView, Text, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Text, ScrollView, Alert, Modal } from 'react-native';
 import { Card, Button } from 'react-native-elements';
+import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fetchOrder, updateOrder } from '../api';
-import { PaymentMethod, PaymentStatus, OrderStatus } from '../enums';
+import { PaymentMethod, PaymentStatus, OrderStatus, CancellationReason } from '../enums';
 import { getDateTimeFromMilliseconds, getOrderQuantity } from '../helpers';
 import { fetchNewOrders, refreshOngoingOrders, refreshCompletedOrders } from '../redux/actions';
 
@@ -15,9 +16,11 @@ import CustomBadge from './CustomBadge';
 import FormattedPrice from './FormattedPrice';
 
 const OrderDetailsScreen = ({ route, fetchNewOrders, refreshOngoingOrders, refreshCompletedOrders }) => {
+    const orderId = route.params.orderId;
     const [order, setOrder] = useState(null);
     const [refreshing, setRefreshing] = useState(true);
-    const orderId = route.params.orderId;
+    const [modalVisible, setModalVisible] = useState(false);
+    const [cancellationReason, setCancellationReason] = useState('');
 
     useEffect(() => {
         if (refreshing) {
@@ -125,7 +128,7 @@ const OrderDetailsScreen = ({ route, fetchNewOrders, refreshOngoingOrders, refre
                                 onPress={() => {
                                     Alert.alert(
                                         'Xác nhận đơn hàng',
-                                        'Bạn muốn xác nhận đơn hàng này? Lưu ý: Không thể huỷ đơn hàng sau khi đã xác nhận',
+                                        'Bạn muốn xác nhận thực hiện đơn hàng này?\nLưu ý: Không thể huỷ đơn hàng sau khi đã xác nhận.',
                                         [{
                                             text: 'Không',
                                             style: 'cancel'
@@ -153,7 +156,7 @@ const OrderDetailsScreen = ({ route, fetchNewOrders, refreshOngoingOrders, refre
                             <Button
                                 title="Huỷ đơn"
                                 buttonStyle={{ backgroundColor: '#db2828', width: 150, borderRadius: 5 }}
-                            // onPress={null}
+                                onPress={() => setModalVisible(true)}
                             />
                         </View>
                         <View
@@ -203,6 +206,89 @@ const OrderDetailsScreen = ({ route, fetchNewOrders, refreshOngoingOrders, refre
                                 }}
                             />
                         </View>
+                    </View>
+                    <View style={styles.centeredView}>
+                        <Modal
+                            animationType="fade"
+                            transparent={true}
+                            visible={modalVisible}
+                        >
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <View style={{}}>
+                                        <Text style={styles.modalTitle}>Huỷ đơn hàng</Text>
+                                        <Text style={styles.modalText}>Vui lòng cho biết lý do huỷ đơn hàng:</Text>
+                                        <DropDownPicker
+                                            items={[
+                                                {
+                                                    label: CancellationReason.OUT_OF_STOCK.label,
+                                                    value: CancellationReason.OUT_OF_STOCK.value
+                                                },
+                                                {
+                                                    label: CancellationReason.STORE_CLOSED.label,
+                                                    value: CancellationReason.STORE_CLOSED.value
+                                                }
+                                            ]}
+                                            placeholder="Chọn một lý do..."
+                                            defaultValue={cancellationReason}
+                                            containerStyle={{ height: 42, marginTop: 12 }}
+                                            style={{ backgroundColor: '#fafafa' }}
+                                            dropDownStyle={{ backgroundColor: '#fafafa' }}
+                                            itemStyle={{ justifyContent: 'flex-start' }}
+                                            onChangeItem={({ value }) => setCancellationReason(value)}
+                                        />
+                                    </View>
+                                    <View style={styles.modalBottomActions}>
+                                        <Button
+                                            title="Suy nghĩ lại"
+                                            buttonStyle={{
+                                                backgroundColor: '#888',
+                                                width: 120,
+                                                borderRadius: 5,
+                                                marginEnd: 6
+                                            }}
+                                            onPress={() => {
+                                                setModalVisible(false);
+                                                setCancellationReason('');
+                                            }}
+                                        />
+                                        <Button
+                                            disabled={!cancellationReason}
+                                            title="Huỷ đơn"
+                                            buttonStyle={{
+                                                backgroundColor: '#db2828',
+                                                width: 120,
+                                                borderRadius: 5,
+                                                marginStart: 6
+                                            }}
+                                            onPress={() => {
+                                                if (cancellationReason) {
+                                                    setModalVisible(false);
+                                                    updateOrder({
+                                                        transactionNo: order.transactionNo,
+                                                        status: OrderStatus.CANCELED.value,
+                                                        cancelReason: cancellationReason
+                                                    })
+                                                        .then(() => {
+                                                            fetchNewOrders();
+                                                            refreshCompletedOrders();
+                                                            setRefreshing(true);
+                                                        })
+                                                        .catch(error => console.error(error));
+                                                } else {
+                                                    Alert.alert(
+                                                        'Chưa chọn lý do huỷ đơn',
+                                                        'Vui lòng chọn một lý do để huỷ đơn.',
+                                                        [{ text: 'OK' }],
+                                                        { cancelable: false }
+                                                    );
+                                                }
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -390,6 +476,39 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         color: '#000'
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 30
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 12
+    },
+    modalText: {
+        fontSize: 16,
+        color: '#222'
+    },
+    modalBottomActions: {
+        flexDirection: 'row',
+        marginTop: 24
     }
 });
 

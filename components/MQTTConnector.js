@@ -7,10 +7,12 @@ import mqttConnection from '../mqtt';
 import { fetchNewOrders } from '../redux/actions';
 
 const inAppNotify = () => {
-    ToastAndroid.showWithGravity(
+    ToastAndroid.showWithGravityAndOffset(
         'Bạn vừa nhận một đơn hàng mới!',
         ToastAndroid.LONG,
-        ToastAndroid.BOTTOM
+        ToastAndroid.BOTTOM,
+        0,
+        120
     );
 };
 
