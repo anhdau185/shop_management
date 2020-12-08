@@ -32,7 +32,11 @@ const OrderDetailsScreen = ({ route, shouldOrderDetailsUpdate, fetchNewOrders, r
     }, [refreshing]);
 
     useEffect(() => {
-        if (shouldOrderDetailsUpdate && shouldOrderDetailsUpdate === orderId) {
+        if (
+            shouldOrderDetailsUpdate
+            && shouldOrderDetailsUpdate === orderId
+            && order && order.status !== OrderStatus.CANCELED.value
+        ) {
             fetchOrder(orderId)
                 .then(response => setOrder(response.data))
                 .catch(error => console.error(error));
