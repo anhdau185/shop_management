@@ -73,6 +73,13 @@ const OrderDetailsScreen = ({ route, shouldOrderDetailsUpdate, fetchNewOrders, r
                                         <DetailIcon iconFamily="FontAwesome5" name="hand-holding-usd" />
                                         <Text style={styles.detailText}>Nhận hàng tại quầy</Text>
                                     </View>
+                                    {
+                                        order.status === OrderStatus.CANCELED.value && order.cancelReason
+                                            ? <View style={{ ...styles.detailTextRow, marginTop: 5 }}>
+                                                <Text style={styles.cancellationReason}>Lý do huỷ đơn: {order.cancelReason}</Text>
+                                            </View>
+                                            : null
+                                    }
                                 </View>
                                 <View style={styles.cardBodyRight}>
                                     <CustomBadge
@@ -414,6 +421,10 @@ const styles = StyleSheet.create({
     },
     detailText: {
         fontSize: 15
+    },
+    cancellationReason: {
+        fontSize: 15,
+        color: '#db2828'
     },
     orderAmount: {
         fontSize: 18,
