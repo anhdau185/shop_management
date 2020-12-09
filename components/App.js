@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import MQTTConnector from './MQTTConnector';
+import LoginScreen from './LoginScreen';
 import OrdersScreen from './OrdersScreen';
 import OrderDetailsScreen from './OrderDetailsScreen';
 
@@ -14,6 +15,11 @@ const App = () => {
         <NavigationContainer>
             <MQTTConnector />
             <Stack.Navigator>
+                <Stack.Screen
+                    name="Login"
+                    component={LoginScreen}
+                    options={{ title: 'Đăng nhập', headerShown: false }}
+                />
                 <Stack.Screen
                     name="Orders"
                     component={OrdersScreen}

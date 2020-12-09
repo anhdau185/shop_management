@@ -1,14 +1,16 @@
 import { schemes, httpMethods, headers } from './staticEntries';
 
 const scheme = schemes.HTTPS;
-const host = 'c4c1131f73c7.ngrok.io';
+const host = '1e8b9090cd51.ap.ngrok.io';
 const basePath = '/api/v1';
 const paths = {
     get: {
         orders: '/orders'
     },
     post: {
-        orders: '/orders'
+        orders: '/orders',
+        login: '/mobile/users/login',
+        authenticate: '/start_session'
     }
 };
 
@@ -19,8 +21,8 @@ function toQueryString(params) {
     return '?' + keys.map(key => `${key}=${encodeURIComponent(`${params[key]}`)}`).join('&');
 };
 
-function getApiPath(path, params = null) {
-    let apiPath = scheme + host + basePath + path;
+function getApiPath(path, params = null, hasBasePath = true) {
+    let apiPath = scheme + host + (hasBasePath ? basePath : '') + path;
     if (params) {
         const type = typeof params;
 
@@ -66,6 +68,23 @@ export const fetchOrder = async orderId => {
 export const updateOrder = async orderData => {
     const apiPath = getApiPath(paths.post.orders);
     const configurations = getConfigurations(httpMethods.PUT, orderData);
+    const response = await fetch(apiPath, configurations);
+    const data = await response.json();
+    return data;
+};
+
+export const accountLogin = async authentication => {
+    const apiPath = getApiPath(paths.post.login, null, false);
+    const configurations = getConfigurations(httpMethods.POST, authentication);
+    const response = await fetch(apiPath, configurations);
+    const data = await response.json();
+    return data;
+};
+
+export const authenticateUser = async authToken => {
+    const apiPath = getApiPath(paths.post.authenticate);
+    let configurations = getConfigurations(httpMethods.POST);
+    configurations.headers['Authorization'] = authToken;
     const response = await fetch(apiPath, configurations);
     const data = await response.json();
     return data;
