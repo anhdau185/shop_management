@@ -14,5 +14,5 @@ export const httpMethods = {
 export const headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnQiOiJVSVQgU2hvcCIsInN0b3JlX2lkIjoiMTAwMCIsImV4cCI6MTYwNzc5MTE0N30.Ek1vLOP1J_NhjH1P5HTAfkNMXfhT-lGfZJRFSplQpxo'
+    'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnQiOiJVSVQgU0hPUCJ9.MQiLgrZ9EjFMjTPs2Br8WKFFzYRjL7bPC6MJWwFF9QA'
 };
